@@ -1,0 +1,6 @@
+/venv/
+/venv/Lib/
+/venv/Lib/site-packages/
+/venv/Scripts/
+/venv/.gitignore
+/venv/pyvenv.cfg
