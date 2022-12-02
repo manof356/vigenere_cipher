@@ -4,3 +4,8 @@
 /venv/Scripts/
 /venv/.gitignore
 /venv/pyvenv.cfg
+/.idea/modules.xml
+/.idea/misc.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/vcs.xml
+/.idea/vigenere_cipher.iml
