@@ -5,11 +5,10 @@
 
 import string
 
-# phrase = "Вкоят щбце, ияыьунб эычою аеххль лъ нгсз ыз вмгфъагфзэоы ясфбоиилх ёажтсазюшллн пзле"
-phrase = "Порой люди, которые якобы ничего из себя не представляют совершают удивительные вещи"
-cipher_key = "Тьюринг"
+main_phrase = "How many Children do you have?"
+cipher_key = "I have five kids, thanks for you queStion"
 
-language = "Rus"
+language = "Eng"
 encrypt_or_decrypt = True
 
 rus_low_alphabet = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с",
@@ -25,10 +24,15 @@ rus_eng_upp_alph = {"rus": rus_upp_alphabet, "eng": eng_upp_alphabet}
 
 low_alph = rus_eng_low_alph[language.lower()]
 upp_alph = rus_eng_upp_alph[language.lower()]
-result_alph =low_alph + upp_alph
+result_alph = low_alph + upp_alph
 
 
 def del_all_punctuation(phrase: str):
+    """
+    deletes all punctuations in phrase
+    :param phrase: phrase to encrypt or decrypt
+    :return: phase without any punctuations
+    """
     phrase_only_letters = ""
     for i in phrase:
         if i in result_alph:
@@ -37,6 +41,12 @@ def del_all_punctuation(phrase: str):
 
 
 def repeat_key(key: str, phrase: str):
+    """
+    loops key as many times as length phrase
+    :param key: encryption key
+    :param phrase: phrase to encrypt or decrypt. it is needed to count its length
+    :return: looped key
+    """
     new_phrase = del_all_punctuation(phrase)
     res = del_all_punctuation(key.lower())
     res *= (len(new_phrase) // len(key) + 1)
@@ -67,14 +77,14 @@ def en_or_de_crypt_it(phrase: str, key: str, en_or_de: bool = True):
     return result
 
 
-def encrypt_phrase(phrase: str, key: str):
+def encrypt_phrase(phrase: str, key: str, en_or_de: bool = True):
     """
-
+    encrypts or decrypts phase with key and with punctuation according to entry phrase
     :param phrase: phrase to encrypt or decrypt
     :param key: encryption key
     :return: phrase with punctuation according to entry phrase
     """
-    res_phrase_only_letters = en_or_de_crypt_it(phrase, key, encrypt_or_decrypt)
+    res_phrase_only_letters = en_or_de_crypt_it(phrase, key, en_or_de)
     result = ""
     j = 0
     for i in phrase:
@@ -86,4 +96,4 @@ def encrypt_phrase(phrase: str, key: str):
     return result
 
 
-print(encrypt_phrase(phrase, cipher_key))
+print(encrypt_phrase(main_phrase, cipher_key, encrypt_or_decrypt))
