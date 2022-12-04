@@ -2,24 +2,20 @@
 # from PyQt6.QtWidgets import QApplication, QMainWindow
 #
 # import sys
+
 import string
 
-# ords_of_rus_alphabet = list(range(1040, 1104)) + [1105, 1025]
-
-# phrase = input()
-# cipher_key = input()
-
+# phrase = "Вкоят щбце, ияыьунб эычою аеххль лъ нгсз ыз вмгфъагфзэоы ясфбоиилх ёажтсазюшллн пзле"
 phrase = "Порой люди, которые якобы ничего из себя не представляют совершают удивительные вещи"
 cipher_key = "Тьюринг"
-# phrase = "яяЯЯЯяяЯЯ"
-# cipher_key = "ю"
 
 language = "Rus"
+encrypt_or_decrypt = True
 
-rus_low_alphabet = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с", "т",
-                    "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "ы", "ю", "я"]
-rus_upp_alphabet = ['А', 'Б', 'В', 'Г', 'Д', 'Е', 'Ё', 'Ж', 'З', 'И', 'Й', 'К', 'Л', 'М', 'Н', 'О', 'П', 'Р', 'С', 'Т',
-                    'У', 'Ф', 'Х', 'Ц', 'Ч', 'Ш', 'Щ', 'Ъ', 'Ы', 'Ь', 'Ы', 'Ю', 'Я']
+rus_low_alphabet = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с",
+                    "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"]
+
+rus_upp_alphabet = list(map(lambda x: x.upper(), rus_low_alphabet))
 
 eng_low_alphabet = string.ascii_lowercase
 eng_upp_alphabet = string.ascii_uppercase
@@ -27,14 +23,9 @@ eng_upp_alphabet = string.ascii_uppercase
 rus_eng_low_alph = {"rus": rus_low_alphabet, "eng": eng_low_alphabet}
 rus_eng_upp_alph = {"rus": rus_upp_alphabet, "eng": eng_upp_alphabet}
 
-result_alph = rus_eng_low_alph[language.lower()] + rus_eng_upp_alph[language.lower()]
-
-l1 = "я"
-l2 = "ю"
-res = (rus_low_alphabet.index(l1) + rus_low_alphabet.index(l2)) % 33
-print(rus_low_alphabet.index(l1), rus_low_alphabet.index(l2))
-print(res)
-print(rus_low_alphabet[res])
+low_alph = rus_eng_low_alph[language.lower()]
+upp_alph = rus_eng_upp_alph[language.lower()]
+result_alph =low_alph + upp_alph
 
 
 def del_all_punctuation(phrase: str):
@@ -52,19 +43,24 @@ def repeat_key(key: str, phrase: str):
     return res[:len(new_phrase)]
 
 
-def encrypt_it(phrase: str, key: str):
+def en_or_de_crypt_it(phrase: str, key: str, en_or_de: bool = True):
+    """
+    encrypts or decrypts phase with key without any punctuations
+    :param phrase: phrase to encrypt or decrypt
+    :param key: encryption key
+    :param en_or_de: encrypt = True, decrypt = False
+    :return: encrypted/decrypted phrase without any punctuations
+    """
     new_phrase = del_all_punctuation(phrase)
     res_key = repeat_key(key, phrase)
     result = ""
-    low_alph = rus_eng_low_alph[language.lower()]
-    upp_alph = rus_eng_upp_alph[language.lower()]
     for i, j in zip(new_phrase, res_key):
         if i in result_alph:
             if i.islower():
-                res_index = (low_alph.index(i) + 1 + low_alph.index(j) + 1) % (len(low_alph) - 1)
+                res_index = (low_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % (len(low_alph))
                 result += low_alph[res_index]
             else:
-                res_index = (upp_alph.index(i) + 1 + low_alph.index(j) + 1) % (len(upp_alph) - 1)
+                res_index = (upp_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % (len(upp_alph))
                 result += upp_alph[res_index]
         else:
             result += i
@@ -72,7 +68,13 @@ def encrypt_it(phrase: str, key: str):
 
 
 def encrypt_phrase(phrase: str, key: str):
-    res_phrase_only_letters = encrypt_it(phrase, key)
+    """
+
+    :param phrase: phrase to encrypt or decrypt
+    :param key: encryption key
+    :return: phrase with punctuation according to entry phrase
+    """
+    res_phrase_only_letters = en_or_de_crypt_it(phrase, key, encrypt_or_decrypt)
     result = ""
     j = 0
     for i in phrase:
@@ -84,13 +86,4 @@ def encrypt_phrase(phrase: str, key: str):
     return result
 
 
-site_res = "Вкоят щбце, ияыьунб эычою аеххль лъ нгсз ыз вмгфъагфзэоы ясфбоиилх ёажтсазюшллн пзле"
-
-# print(del_all_punctuation(phrase))
-# print(repeat_key(cipher_key, phrase))
-# print(encrypt_it(phrase, cipher_key))
-#
-# print(encrypt_phrase(phrase, cipher_key))
-# print(site_res)
-# print(phrase)
-# print(site_res == encrypt_phrase(phrase, cipher_key))
+print(encrypt_phrase(phrase, cipher_key))
