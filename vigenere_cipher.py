@@ -1,7 +1,37 @@
-# from PyQt6 import QtWidgets
-# from PyQt6.QtWidgets import QApplication, QMainWindow
-#
-# import sys
+from PyQt6 import QtWidgets
+from PyQt6.QtWidgets import QApplication, QMainWindow
+from PyQt6 import QtCore
+from PyQt6 import uic
+from PyQt6.QtWidgets import QMainWindow, QApplication
+# from PyQt6.QtCore import QRect, QPoint
+
+import sys, os
+
+
+class MainWindow(QMainWindow):
+    """
+    Main window class
+    """
+
+    def __init__(self):
+        """
+        Constructor of main window
+        :param graph: info to plot (from Visualize.plot_data)
+        """
+
+        super(MainWindow, self).__init__()
+        root = os.path.dirname(os.path.realpath(__file__))
+        self.ui = uic.loadUi(os.path.join(root, 'cipher Visener.ui'), baseinstance=self)  # user interface from QT designer
+
+def main():
+    app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
+    window = MainWindow()  # Создаём объект класса MainWindow
+    window.show()  # Показываем окно
+    app.exec()  # и запускаем приложение
+
+if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
+    main()  # то запускаем функцию main()
+
 
 import string
 
