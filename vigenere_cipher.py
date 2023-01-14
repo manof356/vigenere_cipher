@@ -1,11 +1,6 @@
-from PyQt6 import QtWidgets
-from PyQt6.QtWidgets import QApplication, QMainWindow
-from PyQt6 import QtCore
-from PyQt6 import uic
-from PyQt6.QtWidgets import QMainWindow, QApplication
-# from PyQt6.QtCore import QRect, QPoint
-
-import sys, os
+from PyQt6 import QtWidgets, uic
+from PyQt6.QtWidgets import QMainWindow
+import sys, string
 
 
 class MainWindow(QMainWindow):
@@ -16,48 +11,48 @@ class MainWindow(QMainWindow):
     def __init__(self):
         """
         Constructor of main window
-        :param graph: info to plot (from Visualize.plot_data)
         """
-
         super(MainWindow, self).__init__()
-        root = os.path.dirname(os.path.realpath(__file__))
-        self.ui = uic.loadUi(os.path.join(root, 'cipher Visener.ui'), baseinstance=self)  # user interface from QT designer
+        self.ui = uic.loadUi('cipher Vigenere.ui', baseinstance=self)
 
-def main():
-    app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
-    window = MainWindow()  # Создаём объект класса MainWindow
-    window.show()  # Показываем окно
-    app.exec()  # и запускаем приложение
+        self.textEdit_phrase = self.findChild(QtWidgets.QTextEdit, 'textEdit_phrase')
+        self.textEdit_key = self.findChild(QtWidgets.QTextEdit, 'textEdit_key')
 
-if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
-    main()  # то запускаем функцию main()
+        self.textBrowser_res = self.findChild(QtWidgets.QTextBrowser, 'textBrowser_res')
+        self.radioButton_ENC = self.findChild(QtWidgets.QRadioButton, "radioButton_ENC")
 
+        self.radioButton_RUS = self.findChild(QtWidgets.QRadioButton, "radioButton_RUS")
+        self.pushButton_get_res = self.findChild(QtWidgets.QPushButton, 'pushButton_get_res')
 
-import string
+        self.pushButton_get_res.clicked.connect(self.show_result)
 
-main_phrase = "How many Children do you have?"
-cipher_key = "I have five kids, thanks for you queStion"
-
-language = "Eng"
-encrypt_or_decrypt = True
-
-rus_low_alphabet = ["а", "б", "в", "г", "д", "е", "ё", "ж", "з", "и", "й", "к", "л", "м", "н", "о", "п", "р", "с",
-                    "т", "у", "ф", "х", "ц", "ч", "ш", "щ", "ъ", "ы", "ь", "э", "ю", "я"]
-
-rus_upp_alphabet = list(map(lambda x: x.upper(), rus_low_alphabet))
-
-eng_low_alphabet = string.ascii_lowercase
-eng_upp_alphabet = string.ascii_uppercase
-
-rus_eng_low_alph = {"rus": rus_low_alphabet, "eng": eng_low_alphabet}
-rus_eng_upp_alph = {"rus": rus_upp_alphabet, "eng": eng_upp_alphabet}
-
-low_alph = rus_eng_low_alph[language.lower()]
-upp_alph = rus_eng_upp_alph[language.lower()]
-result_alph = low_alph + upp_alph
+    def show_result(self):
+        main_phrase = self.textEdit_phrase.toPlainText()
+        cipher_key = self.textEdit_key.toPlainText()
+        encrypt_or_decrypt = self.radioButton_ENC.isChecked()
+        language = ["Eng", "Rus"][self.radioButton_RUS.isChecked()]
+        self.textBrowser_res.setText(encrypt_phrase(main_phrase, cipher_key, language, encrypt_or_decrypt))
 
 
-def del_all_punctuation(phrase: str):
+RUS_low_alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
+
+RUS_upp_alphabet = RUS_low_alphabet.upper()
+
+ENG_low_alphabet = string.ascii_lowercase
+ENG_upp_alphabet = string.ascii_uppercase
+
+RUS_ENG_low_alph = {"rus": RUS_low_alphabet, "eng": ENG_low_alphabet}
+RUS_ENG_upp_alph = {"rus": RUS_upp_alphabet, "eng": ENG_upp_alphabet}
+
+
+def result_alph(lang: str):
+    global low_alph, upp_alph
+    low_alph = RUS_ENG_low_alph[lang.lower()]
+    upp_alph = RUS_ENG_upp_alph[lang.lower()]
+    return low_alph + upp_alph
+
+
+def del_all_punctuation(phrase: str, language: str):
     """
     deletes all punctuations in phrase
     :param phrase: phrase to encrypt or decrypt
@@ -65,25 +60,25 @@ def del_all_punctuation(phrase: str):
     """
     phrase_only_letters = ""
     for i in phrase:
-        if i in result_alph:
+        if i in result_alph(language):
             phrase_only_letters += i
     return phrase_only_letters
 
 
-def repeat_key(key: str, phrase: str):
+def repeat_key(key: str, phrase: str, language: str):
     """
     loops key as many times as length phrase
     :param key: encryption key
     :param phrase: phrase to encrypt or decrypt. it is needed to count its length
     :return: looped key
     """
-    new_phrase = del_all_punctuation(phrase)
-    res = del_all_punctuation(key.lower())
+    new_phrase = del_all_punctuation(phrase, language)
+    res = del_all_punctuation(key.lower(), language)
     res *= (len(new_phrase) // len(key) + 1)
     return res[:len(new_phrase)]
 
 
-def en_or_de_crypt_it(phrase: str, key: str, en_or_de: bool = True):
+def en_or_de_crypt_it(phrase: str, key: str, language: str, en_or_de: bool = True):
     """
     encrypts or decrypts phase with key without any punctuations
     :param phrase: phrase to encrypt or decrypt
@@ -91,34 +86,34 @@ def en_or_de_crypt_it(phrase: str, key: str, en_or_de: bool = True):
     :param en_or_de: encrypt = True, decrypt = False
     :return: encrypted/decrypted phrase without any punctuations
     """
-    new_phrase = del_all_punctuation(phrase)
-    res_key = repeat_key(key, phrase)
+    new_phrase = del_all_punctuation(phrase, language)
+    res_key = repeat_key(key, phrase, language)
     result = ""
     for i, j in zip(new_phrase, res_key):
-        if i in result_alph:
+        if i in result_alph(language):
             if i.islower():
-                res_index = (low_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % (len(low_alph))
+                res_index = (low_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % len(low_alph)
                 result += low_alph[res_index]
             else:
-                res_index = (upp_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % (len(upp_alph))
+                res_index = (upp_alph.index(i) + [-1, 1][en_or_de] * low_alph.index(j)) % len(upp_alph)
                 result += upp_alph[res_index]
         else:
             result += i
     return result
 
 
-def encrypt_phrase(phrase: str, key: str, en_or_de: bool = True):
+def encrypt_phrase(phrase: str, key: str, language: str, en_or_de: bool = True):
     """
     encrypts or decrypts phase with key and with punctuation according to entry phrase
     :param phrase: phrase to encrypt or decrypt
     :param key: encryption key
     :return: phrase with punctuation according to entry phrase
     """
-    res_phrase_only_letters = en_or_de_crypt_it(phrase, key, en_or_de)
+    res_phrase_only_letters = en_or_de_crypt_it(phrase, key, language, en_or_de)
     result = ""
     j = 0
     for i in phrase:
-        if i in result_alph:
+        if i in result_alph(language):
             result += res_phrase_only_letters[j]
             j += 1
         else:
@@ -126,4 +121,12 @@ def encrypt_phrase(phrase: str, key: str, en_or_de: bool = True):
     return result
 
 
-print(encrypt_phrase(main_phrase, cipher_key, encrypt_or_decrypt))
+def main():
+    app = QtWidgets.QApplication(sys.argv)  # Новый экземпляр QApplication
+    window = MainWindow()  # Создаём объект класса MainWindow
+    window.show()  # Показываем окно
+    app.exec()  # и запускаем приложение
+
+
+if __name__ == '__main__':  # Если мы запускаем файл напрямую, а не импортируем
+    main()  # то запускаем функцию main()
