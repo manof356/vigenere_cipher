@@ -20,34 +20,34 @@
       <item>
        <layout class="QGridLayout" name="gridLayout">
         <item row="1" column="1">
-         <widget class="QTextEdit" name="textEdit_key"/>
-        </item>
-        <item row="0" column="1">
          <widget class="QTextEdit" name="textEdit_phrase"/>
         </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_phrase">
-          <property name="text">
-           <string>Фраза</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_key">
-          <property name="text">
-           <string>Ключ</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="label_res">
           <property name="text">
            <string>Результат</string>
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
+        <item row="3" column="1">
          <widget class="QTextBrowser" name="textBrowser_res"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QTextEdit" name="textEdit_key"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_key">
+          <property name="text">
+           <string>Ключ</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_phrase">
+          <property name="text">
+           <string>Фраза</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -146,7 +146,7 @@
  <resources/>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroup_crypt"/>
   <buttongroup name="buttonGroup_language"/>
+  <buttongroup name="buttonGroup_crypt"/>
  </buttongroups>
 </ui>
