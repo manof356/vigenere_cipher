@@ -1,5 +1,5 @@
 from PyQt6 import QtWidgets, uic
-from PyQt6.QtWidgets import QMainWindow
+from PyQt6.QtWidgets import QMainWindow, QMessageBox
 import sys, string
 
 
@@ -23,15 +23,31 @@ class MainWindow(QMainWindow):
 
         self.radioButton_RUS = self.findChild(QtWidgets.QRadioButton, "radioButton_RUS")
         self.pushButton_get_res = self.findChild(QtWidgets.QPushButton, 'pushButton_get_res')
-
         self.pushButton_get_res.clicked.connect(self.show_result)
 
     def show_result(self):
-        main_phrase = self.textEdit_phrase.toPlainText()
-        cipher_key = self.textEdit_key.toPlainText()
-        encrypt_or_decrypt = self.radioButton_ENC.isChecked()
-        language = self.radioButton_RUS.isChecked()
-        self.textBrowser_res.setText(encrypt_phrase(main_phrase, cipher_key, language, encrypt_or_decrypt))
+        if any([self.textEdit_phrase.toPlainText() == "",
+                self.textEdit_key.toPlainText() == "",
+                self.textEdit_phrase.toPlainText().isdigit(),
+                self.textEdit_key.toPlainText().isdigit()]):
+            err = QMessageBox()
+            err.setWindowTitle("Ошибка")
+            err.setIcon(QMessageBox.Icon.Warning)
+            err.setStandardButtons(QMessageBox.StandardButton.Ok)
+            if self.textEdit_phrase.toPlainText() == "":
+                err.setText("Поле фразы не должно быть пустым")
+            elif self.textEdit_key.toPlainText() == "":
+                err.setText("Поле ключа не должно быть пустым")
+            elif not self.textEdit_phrase.toPlainText().isascii() \
+                    or not self.textEdit_key.toPlainText().isascii():
+                err.setText("Поле не должно содержать цифр")
+            err.exec()
+        else:
+            main_phrase = self.textEdit_phrase.toPlainText()
+            cipher_key = self.textEdit_key.toPlainText()
+            encrypt_or_decrypt = self.radioButton_ENC.isChecked()
+            language = self.radioButton_RUS.isChecked()
+            self.textBrowser_res.setText(encrypt_phrase(main_phrase, cipher_key, language, encrypt_or_decrypt))
 
 
 RUS_low_alphabet = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
