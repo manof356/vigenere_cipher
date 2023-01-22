@@ -25,23 +25,31 @@ class MainWindow(QMainWindow):
         self.pushButton_get_res = self.findChild(QtWidgets.QPushButton, 'pushButton_get_res')
         self.pushButton_get_res.clicked.connect(self.show_result)
 
+    def mes_box_text(self, txt: str):
+        err = QMessageBox()
+        err.setWindowTitle("Ошибка")
+        err.setIcon(QMessageBox.Icon.Warning)
+        err.setStandardButtons(QMessageBox.StandardButton.Ok)
+        err.setText(txt)
+        err.exec()
+
     def show_result(self):
-        if any([self.textEdit_phrase.toPlainText() == "",
-                self.textEdit_key.toPlainText() == "",
-                self.textEdit_phrase.toPlainText().isdigit(),
-                self.textEdit_key.toPlainText().isdigit()]):
-            err = QMessageBox()
-            err.setWindowTitle("Ошибка")
-            err.setIcon(QMessageBox.Icon.Warning)
-            err.setStandardButtons(QMessageBox.StandardButton.Ok)
-            if self.textEdit_phrase.toPlainText() == "":
-                err.setText("Поле фразы не должно быть пустым")
-            elif self.textEdit_key.toPlainText() == "":
-                err.setText("Поле ключа не должно быть пустым")
-            elif not self.textEdit_phrase.toPlainText().isascii() \
-                    or not self.textEdit_key.toPlainText().isascii():
-                err.setText("Поле не должно содержать цифр")
-            err.exec()
+        if self.textEdit_phrase.toPlainText() == "":
+            self.mes_box_text("Поле фразы не должно быть пустым")
+        elif self.textEdit_key.toPlainText() == "":
+            self.mes_box_text("Поле ключа не должно быть пустым")
+
+        elif not isletters(self.textEdit_phrase.toPlainText()):
+            self.mes_box_text("Поле фразы должно содержать хотя бы одну букву")
+        elif not isletters(self.textEdit_key.toPlainText()):
+            self.mes_box_text("Поле ключа должно содержать хотя бы одну букву")
+
+        elif is_rus_eng_letters(self.textEdit_phrase.toPlainText(), self.radioButton_RUS.isChecked()):
+            self.mes_box_text(f"Поле фразы должно содержать хотя бы одну "
+                              f"{['английскую', 'русскую'][self.radioButton_RUS.isChecked()]} букву")
+        elif is_rus_eng_letters(self.textEdit_key.toPlainText(), self.radioButton_RUS.isChecked()):
+            self.mes_box_text(f"Поле ключа должно содержать хотя бы одну "
+                              f"{['английскую', 'русскую'][self.radioButton_RUS.isChecked()]} букву")
         else:
             main_phrase = self.textEdit_phrase.toPlainText()
             cipher_key = self.textEdit_key.toPlainText()
@@ -59,6 +67,21 @@ ENG_upp_alphabet = string.ascii_uppercase
 
 RUS_ENG_low_alph = [ENG_low_alphabet, RUS_low_alphabet]
 RUS_ENG_upp_alph = [ENG_upp_alphabet, RUS_upp_alphabet]
+
+
+def isletters(txt: str):
+    for i in txt:
+        if i.isalpha():
+            return True
+    return False
+
+
+def is_rus_eng_letters(txt: str, alph: bool):
+    letters = [ENG_low_alphabet + ENG_upp_alphabet, RUS_low_alphabet + RUS_upp_alphabet]
+    for i in txt:
+        if i in letters[alph]:
+            return False
+    return True
 
 
 def result_alph(lang: bool):
