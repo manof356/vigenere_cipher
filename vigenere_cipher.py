@@ -39,9 +39,9 @@ class MainWindow(QMainWindow):
         elif self.textEdit_key.toPlainText() == "":
             self.mes_box_text("Поле ключа не должно быть пустым")
 
-        elif not isletters(self.textEdit_phrase.toPlainText()):
+        elif not is_letters(self.textEdit_phrase.toPlainText()):
             self.mes_box_text("Поле фразы должно содержать хотя бы одну букву")
-        elif not isletters(self.textEdit_key.toPlainText()):
+        elif not is_letters(self.textEdit_key.toPlainText()):
             self.mes_box_text("Поле ключа должно содержать хотя бы одну букву")
 
         elif is_rus_eng_letters(self.textEdit_phrase.toPlainText(), self.radioButton_RUS.isChecked()):
@@ -69,7 +69,7 @@ RUS_ENG_low_alph = [ENG_low_alphabet, RUS_low_alphabet]
 RUS_ENG_upp_alph = [ENG_upp_alphabet, RUS_upp_alphabet]
 
 
-def isletters(txt: str):
+def is_letters(txt: str):
     for i in txt:
         if i.isalpha():
             return True
